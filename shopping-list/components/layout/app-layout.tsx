@@ -6,17 +6,14 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from "lucide-react"
+import { useEffect, useState } from "react"
+import Link from "next/link"
 
 type SyncStatus = "offline" | "syncing" | "synced"
 
-export function AppLayout({ children }: { children: React.ReactNode }) {
-  const syncStatus: SyncStatus = "synced"
-
-  const syncStatusColors = {
-    offline: "bg-muted-foreground",
-    syncing: "bg-warning",
-    synced: "bg-success",
-  }
+const AppLayout = ({ children }: { children: React.ReactNode }) => {
+  
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>("offline")
 
   const syncStatusStyles: Record<SyncStatus, React.CSSProperties> = {
     offline: { backgroundColor: "#6B7280" },
@@ -30,13 +27,41 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     synced: "Synced",
   }
 
-  console.log(syncStatusLabels[syncStatus])
+ 
+  useEffect(() => {
+    
+    setSyncStatus(navigator.onLine ? "synced" : "offline");
+    
+    const handleOnline = () => {  
+      setSyncStatus("syncing")
+      setTimeout(() => setSyncStatus("synced"), 1000)
+    }
+
+    const handleOffline = () => {
+      setSyncStatus("offline")
+    }
+
+    window.addEventListener("online", handleOnline)
+    window.addEventListener("offline", handleOffline)
+
+    return () => {
+      window.removeEventListener("online", handleOnline)
+      window.removeEventListener("offline", handleOffline)
+    }
+  }, [])
+
+  const handleLogOut = () => {
+    console.log('user is going to be logged out')
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Top bar */}
+
       <header className="border-b border-border bg-card">
-        <div className="mx-auto flex h-14 max-w-[720px] items-center justify-between px-4">
-          <h1 className="text-lg font-semibold text-foreground">Shopping List</h1>
+        <div className="mx-auto flex h-14 max-w-180 items-center justify-between px-4">
+          <Link href={'/'}>
+            <h1 className="text-lg font-semibold text-foreground">Shopping List</h1>
+          </Link>
 
           <div className="flex items-center gap-4">
             <Badge 
@@ -55,16 +80,23 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href={'/settings'}>
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogOut}>
+                  Logout
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="mx-auto max-w-[720px] px-4 py-4">{children}</main>
+      <main className="mx-auto max-w-180 px-4 py-4">{children}</main>
     </div>
   )
 }
+
+export default AppLayout

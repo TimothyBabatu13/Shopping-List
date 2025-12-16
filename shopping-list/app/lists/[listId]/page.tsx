@@ -1,4 +1,4 @@
-import { AppLayout } from "@/components/layout/app-layout"
+import AppLayout from "@/components/layout/app-layout"
 import { SingleListView } from "@/components/lists/single-list-view"
 
 const SingleListPage =  async ({ params } 

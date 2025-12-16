@@ -1,6 +1,6 @@
 "use client"
 
-import { AppLayout } from "@/components/layout/app-layout"
+import AppLayout from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 
