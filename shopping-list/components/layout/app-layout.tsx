@@ -18,12 +18,19 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     synced: "bg-success",
   }
 
+  const syncStatusStyles: Record<SyncStatus, React.CSSProperties> = {
+    offline: { backgroundColor: "#6B7280" },
+    syncing: { backgroundColor: "#D97706" },
+    synced: { backgroundColor: "#16A34A" },
+  }
+
   const syncStatusLabels = {
     offline: "Offline",
     syncing: "Syncing",
     synced: "Synced",
   }
 
+  console.log(syncStatusLabels[syncStatus])
   return (
     <div className="min-h-screen bg-background">
       {/* Top bar */}
@@ -32,7 +39,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <h1 className="text-lg font-semibold text-foreground">Shopping List</h1>
 
           <div className="flex items-center gap-4">
-            <Badge variant="secondary" className={`${syncStatusColors[syncStatus]} text-xs font-normal text-white`}>
+            <Badge 
+              variant="secondary" 
+              className={`text-xs font-normal text-white`}
+              style={syncStatusStyles[syncStatus]}
+            >
               {syncStatusLabels[syncStatus]}
             </Badge>
 
