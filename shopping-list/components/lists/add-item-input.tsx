@@ -6,19 +6,21 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Plus } from "lucide-react"
+import { useList } from "@/hooks/use-db"
 
-type AddItemInputProps = {
-  onAddItem: (name: string, quantity?: string) => void
-}
 
-export function AddItemInput({ onAddItem }: AddItemInputProps) {
+export const AddItemInput = ({ listId } : {
+  listId: string
+}) => {
+
   const [name, setName] = useState("")
   const [quantity, setQuantity] = useState("")
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const { addItem } = useList(listId)
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (name.trim()) {
-      onAddItem(name.trim(), quantity.trim() || undefined)
+      await addItem(name.trim(), quantity.trim())
       setName("")
       setQuantity("")
     }

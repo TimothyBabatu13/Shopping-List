@@ -2,60 +2,28 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { UserPlus, ArrowLeft } from "lucide-react"
-import Link from "next/link"
+import { UserPlus } from "lucide-react"
 import { ListItemRow } from "./list-item-row"
 import { AddItemInput } from "./add-item-input"
 import { InviteCollaboratorDialog } from "./invite-collaborator-dialog"
+import GoBack from "./go-back"
+import { useList } from "@/hooks/use-db"
 
-type ListItem = {
-  id: string
-  name: string
-  quantity?: string
-  checked: boolean
-}
-
-export function SingleListView({ listId }: { listId: string }) {
-  const [items, setItems] = useState<ListItem[]>([
-    { id: "1", name: "Milk", quantity: "2L", checked: false },
-    { id: "2", name: "Bread", checked: true },
-    { id: "3", name: "Eggs", quantity: "12", checked: false },
-  ])
+export const SingleListView = ({ listId }: { listId: string }) => {
+  
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false)
 
-  const handleAddItem = (name: string, quantity?: string) => {
-    const newItem: ListItem = {
-      id: Date.now().toString(),
-      name,
-      quantity,
-      checked: false,
-    }
-    setItems([...items, newItem])
-  }
-
-  const handleToggleItem = (id: string) => {
-    setItems(items.map((item) => (item.id === id ? { ...item, checked: !item.checked } : item)))
-  }
-
-  const handleEditItem = (id: string, name: string, quantity?: string) => {
-    setItems(items.map((item) => (item.id === id ? { ...item, name, quantity } : item)))
-  }
-
-  const handleDeleteItem = (id: string) => {
-    setItems(items.filter((item) => item.id !== id))
-  }
+  const { list } = useList(listId);
+  
+  if(!list) return null
 
   return (
     <>
       <div className="mb-4 flex items-center gap-2">
-        <Link href="/lists">
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
-        <h2 className="text-2xl font-bold text-foreground">Groceries</h2>
+        <GoBack />
+        <h2 className="text-2xl font-bold text-foreground">{list.name}</h2>
       </div>
-
+      {list.description && <h3 className="text-[18px] font-normal text-foreground mb-4">{list.description}</h3>}
       <div className="mb-4">
         <Button onClick={() => setIsInviteDialogOpen(true)} variant="outline" className="h-10">
           <UserPlus className="mr-2 h-4 w-4" />
@@ -64,18 +32,21 @@ export function SingleListView({ listId }: { listId: string }) {
       </div>
 
       <div className="mb-4 space-y-2">
-        {items.map((item) => (
+        {
+          list.items.length < 1 && (
+            <p>You have nothing here for now</p>
+          )
+        }
+        {list.items.length > 0 && list.items.map((item) => (
           <ListItemRow
             key={item.id}
+            listId={listId}
             item={item}
-            onToggle={handleToggleItem}
-            onEdit={handleEditItem}
-            onDelete={handleDeleteItem}
           />
         ))}
       </div>
 
-      <AddItemInput onAddItem={handleAddItem} />
+      <AddItemInput listId={listId}/>
 
       <InviteCollaboratorDialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen} />
     </>

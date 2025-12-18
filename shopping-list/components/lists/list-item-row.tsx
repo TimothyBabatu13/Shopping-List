@@ -1,33 +1,27 @@
 "use client"
 
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Pencil, Trash2, Check, X } from "lucide-react"
+import { ListItem } from "@/types/type"
+import { useList } from "@/hooks/use-db"
 
-type ListItem = {
-  id: string
-  name: string
-  quantity?: string
-  checked: boolean
-}
-
-type ListItemRowProps = {
+export const ListItemRow = ({ item, listId }: {
   item: ListItem
-  onToggle: (id: string) => void
-  onEdit: (id: string, name: string, quantity?: string) => void
-  onDelete: (id: string) => void
-}
+  listId: string
+}) => {
 
-export function ListItemRow({ item, onToggle, onEdit, onDelete }: ListItemRowProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState(item.name)
   const [editQuantity, setEditQuantity] = useState(item.quantity || "")
 
-  const handleSave = () => {
+  const { deleteItem, toggleItemChecked, updateItem } = useList(listId);
+
+  const handleUpdate = async () => {
     if (editName.trim()) {
-      onEdit(item.id, editName.trim(), editQuantity.trim() || undefined)
+      await updateItem(item.id, editName.trim(), editQuantity.trim())
       setIsEditing(false)
     }
   }
@@ -56,7 +50,7 @@ export function ListItemRow({ item, onToggle, onEdit, onDelete }: ListItemRowPro
           />
         </div>
         <div className="flex gap-1">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleSave}>
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleUpdate}>
             <Check className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleCancel}>
@@ -67,9 +61,22 @@ export function ListItemRow({ item, onToggle, onEdit, onDelete }: ListItemRowPro
     )
   }
 
+
+  const handleDelete = async () => {
+    await deleteItem(item.id)
+  }
+  
+  const getToggleValue = () => {
+    return item.checked ? false : true 
+  }
+
+  const handleToggle = async () => {
+    toggleItemChecked(item.id, getToggleValue())
+  }
+
   return (
     <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
-      <Checkbox checked={item.checked} onCheckedChange={() => onToggle(item.id)} />
+      <Checkbox checked={item.checked} onCheckedChange={handleToggle} />
       <div className="flex-1">
         <span className={`text-sm ${item.checked ? "text-muted-foreground line-through" : "text-foreground"}`}>
           {item.name}
@@ -84,7 +91,7 @@ export function ListItemRow({ item, onToggle, onEdit, onDelete }: ListItemRowPro
           variant="ghost"
           size="icon"
           className="h-8 w-8 text-destructive hover:text-destructive"
-          onClick={() => onDelete(item.id)}
+          onClick={handleDelete}
         >
           <Trash2 className="h-4 w-4" />
         </Button>

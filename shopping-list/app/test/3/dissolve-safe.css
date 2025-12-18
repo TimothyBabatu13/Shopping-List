@@ -1,0 +1,5 @@
+/* dissolve-safe.css */
+.dissolve-safe * {
+    color: rgb(0, 0, 0) !important;
+    background-color: transparent !important;
+}

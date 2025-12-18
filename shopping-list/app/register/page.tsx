@@ -7,7 +7,7 @@ import Link from "next/link"
 export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-[400px] rounded-lg border border-border bg-card p-8">
+      <div className="w-full max-w-100 rounded-lg border border-border bg-card p-8">
         <h1 className="mb-6 text-2xl font-bold text-foreground">Register</h1>
 
         <form className="flex flex-col gap-4">

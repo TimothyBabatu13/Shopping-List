@@ -8,8 +8,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ChevronDown } from "lucide-react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { SyncStatus } from "@/types/type"
 
-type SyncStatus = "offline" | "syncing" | "synced"
+const syncStatusLabels = {
+  offline: "Offline",
+  syncing: "Syncing",
+  synced: "Synced",
+}
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   
@@ -20,13 +25,6 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
     syncing: { backgroundColor: "#D97706" },
     synced: { backgroundColor: "#16A34A" },
   }
-
-  const syncStatusLabels = {
-    offline: "Offline",
-    syncing: "Syncing",
-    synced: "Synced",
-  }
-
  
   useEffect(() => {
     
@@ -80,7 +78,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link href={'/settings'}>
                     Settings
                   </Link>

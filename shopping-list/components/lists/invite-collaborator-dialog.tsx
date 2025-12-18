@@ -35,7 +35,7 @@ export function InviteCollaboratorDialog({ open, onOpenChange }: InviteCollabora
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-106.25">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">Invite Collaborator</DialogTitle>
         </DialogHeader>

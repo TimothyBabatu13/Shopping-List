@@ -1,83 +1,82 @@
 "use client"
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Plus, Users, ShoppingCart } from "lucide-react"
-import Link from "next/link"
+import { Dispatch, SetStateAction, useState } from "react"
 import { CreateListDialog } from "./create-list-dialog"
+import CreateList from "./create-list"
+import ListCard from "./list-card"
+import { useLists } from "@/hooks/use-db"
 
-type List = {
-  id: string
-  name: string
-  description?: string
-  itemCount: number
-  collaboratorCount: number
-}
+import { EmptyState } from "./empty-state"
+import { LoadingSpinner } from "./loading-state"
 
-export function ListsView() {
-  const [lists, setLists] = useState<List[]>([
-    {
+
+
+
+const data: Array<any> = [
+  {
       id: "1",
       name: "Groceries",
       description: "Weekly shopping",
       itemCount: 12,
       collaboratorCount: 2,
+      createdAt: Date.now()
     },
     {
       id: "2",
       name: "Home Supplies",
       itemCount: 5,
       collaboratorCount: 1,
+      createdAt: Date.now()
     },
-  ])
+]
+
+const Header = ({ setIsCreateDialogOpen } : {
+  setIsCreateDialogOpen: Dispatch<SetStateAction<boolean>>
+}) => {
+  return(
+    <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-foreground">Your Lists</h2>
+        <CreateList setIsCreateDialogOpen={setIsCreateDialogOpen}/>
+    </div>
+  )
+}
+
+export const ListsView = () => {
+  const { lists, isLoading } = useLists()
+
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-
-  const handleCreateList = (name: string, description?: string) => {
-    const newList: List = {
-      id: Date.now().toString(),
-      name,
-      description,
-      itemCount: 0,
-      collaboratorCount: 1,
-    }
-    setLists([...lists, newList])
-  }
-
+  
+  if(isLoading) return (
+    <>
+    <Header setIsCreateDialogOpen={setIsCreateDialogOpen}/>
+    <LoadingSpinner />
+    </>
+  )
+  if(!lists.length) return (
+    <>
+    <Header setIsCreateDialogOpen={setIsCreateDialogOpen}/>
+    <EmptyState message="No lists yet. Add a new list to get started." />
+    <CreateListDialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+      />
+    </>)
+ console.log(lists)
   return (
     <>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-foreground">Your Lists</h2>
-        <Button onClick={() => setIsCreateDialogOpen(true)} className="h-10">
-          <Plus className="mr-2 h-4 w-4" />
-          Create List
-        </Button>
-      </div>
-
-      <div className="space-y-4">
+      <Header setIsCreateDialogOpen={setIsCreateDialogOpen}/>
+      <div className="space-y-4 grid">
         {lists.map((list) => (
-          <Link key={list.id} href={`/lists/${list.id}`}>
-            <div className="rounded-lg border border-border bg-card p-4 transition-colors hover:bg-muted">
-              <h3 className="mb-1 text-lg font-semibold text-foreground">{list.name}</h3>
-              {list.description && <p className="mb-3 text-sm text-muted-foreground">{list.description}</p>}
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <ShoppingCart className="h-4 w-4" />
-                  <span>{list.itemCount} items</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Users className="h-4 w-4" />
-                  <span>{list.collaboratorCount} collaborators</span>
-                </div>
-              </div>
-            </div>
-          </Link>
+          <ListCard 
+            list={list}
+            key={list.id}
+          />
         ))}
       </div>
-
       <CreateListDialog
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
-        onCreateList={handleCreateList}
+        // setLists={setLists}
       />
     </>
   )

@@ -1,35 +1,37 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { ViewList } from "@/types/type"
+import { generateId } from "@/lib/lib"
+import { useLists } from "@/hooks/use-db"
 
-type CreateListDialogProps = {
+export const CreateListDialog = ({ open, onOpenChange }: {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onCreateList: (name: string, description?: string) => void
-}
-
-export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateListDialogProps) {
+  // setLists: Dispatch<SetStateAction<ViewList[]>>
+}) => {
+  
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
-
+  const { addList } = useLists()
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (name.trim()) {
-      onCreateList(name.trim(), description.trim() || undefined)
+      addList(name.trim(), description.trim() || undefined)
       setName("")
       setDescription("")
       onOpenChange(false)
     }
   }
 
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-106.25">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">Create List</DialogTitle>
         </DialogHeader>
