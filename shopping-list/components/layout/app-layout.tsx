@@ -16,7 +16,7 @@ const syncStatusLabels = {
   synced: "Synced",
 }
 
-const AppLayout = ({ children }: { children: React.ReactNode }) => {
+const AppLayout = () => {
   
   const [syncStatus, setSyncStatus] = useState<SyncStatus>("offline")
 
@@ -53,7 +53,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
 
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex h-14 max-w-180 items-center justify-between px-4">
@@ -91,8 +91,6 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
         </div>
       </header>
-
-      <main className="mx-auto max-w-180 px-4 py-4">{children}</main>
     </div>
   )
 }

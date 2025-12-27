@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner"
 // import { PWARegister } from "@/components/pwa/pwa-register";
 import Provider from "@/context/provider";
+import AppLayout from "@/components/layout/app-layout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,9 +35,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <AppLayout />
         <Provider>
           {/* <PWARegister /> */}
-          {children}
+          <main className="mx-auto max-w-180 px-4 py-4">
+            {children}
+          </main>
           <Toaster />
         </Provider>
       </body>
