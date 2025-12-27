@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner"
-import { PWARegister } from "@/components/pwa/pwa-register";
+// import { PWARegister } from "@/components/pwa/pwa-register";
+import Provider from "@/context/provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,9 +34,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <PWARegister />
-        {children}
-        <Toaster />
+        <Provider>
+          {/* <PWARegister /> */}
+          {children}
+          <Toaster />
+        </Provider>
       </body>
     </html>
   );
