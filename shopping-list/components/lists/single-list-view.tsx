@@ -2,16 +2,18 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { UserPlus } from "lucide-react"
+import { User, UserPlus } from "lucide-react"
 import { ListItemRow } from "./list-item-row"
 import { AddItemInput } from "./add-item-input"
 import { InviteCollaboratorDialog } from "./invite-collaborator-dialog"
 import GoBack from "./go-back"
 import { useList } from "@/hooks/use-db"
 import { useAuthContext } from "@/context/auth-context"
+import { toast } from "sonner"
 
 export const SingleListView = ({ listId }: { listId: string }) => {
-  const { loginWithGoogle, logout } = useAuthContext()
+  const { loginWithGoogle, user } = useAuthContext();
+  const [checkIfToLogin, setCheckToLogin] = useState(false);
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false)
 
   const { list } = useList(listId);
@@ -25,13 +27,16 @@ export const SingleListView = ({ listId }: { listId: string }) => {
         <h2 className="text-2xl font-bold text-foreground">{list.name}</h2>
       </div>
       {list.description && <h3 className="text-[18px] font-normal text-foreground mb-4">{list.description}</h3>}
-      <div className="mb-4">
-        {/* // () => setIsInviteDialogOpen(true) */}
+      <div className="mb-4 flex items-center gap-2">
         <Button 
           onClick={()=>{
-            console.log('clicked tho')
-            
-            loginWithGoogle()
+            console.log(user)
+            if(!user) {
+              toast.error("You need to be logged in to invite collaborators");
+              setCheckToLogin(true)
+              return
+            }
+            setIsInviteDialogOpen(true)
           }} 
           variant="outline" 
           className="h-10"
@@ -41,16 +46,17 @@ export const SingleListView = ({ listId }: { listId: string }) => {
         </Button>
 
 
+        {checkIfToLogin && !user && 
         <Button 
           onClick={()=>{
-            console.log('logged out button clicked')
-            logout()
+            loginWithGoogle()
           }} 
           variant="outline" 
           className="h-10"
         >
-          LogOut
-        </Button>
+          <User className="mr-2 h-4 w-4" />
+          Login
+        </Button>}
       </div>
 
       <div className="mb-4 space-y-2">
