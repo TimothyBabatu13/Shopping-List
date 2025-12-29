@@ -2,15 +2,31 @@
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { formatZodErrorsForToast } from "@/lib/zod-error"
+import { AlertCircle } from "lucide-react"
 import Link from "next/link"
+import { toast } from "sonner"
 
 export default function RegisterPage() {
   const handleTestShitOut = async () => {
     try {
       const api = await fetch('/api/start-email-job', {
         method: 'POST',
+        body: JSON.stringify({recipient: "knbtimothy@gmail.com", listLink: "kk", listName: "Ypp"})
       })
-      console.log(api)
+
+      if(api.status === 400){
+        const errorData = await api.json();
+        toast.error(formatZodErrorsForToast(errorData), {
+          style: {
+            backgroundColor: 'red',
+            color: "white",
+            gap: "10px"
+          },
+          icon: <AlertCircle className="mr-10"/>
+        }) ;
+        return
+      }
       const data = await api.json();
       console.log(data);
     } catch (error) {
@@ -21,7 +37,7 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-100 rounded-lg border border-border bg-card p-8">
         <h1 className="mb-6 text-2xl font-bold text-foreground">Register</h1>
-
+        
         <Button
           onClick={handleTestShitOut}
         >

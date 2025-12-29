@@ -49,7 +49,10 @@ const AuthContext = ({ children } : {
     const logout = async () => {
         try {
             const { error } = await supabase.auth.signOut()
+            console.log('heheh')
             if (error) throw error
+            console.log('user logged out')
+            setUser(null)
         } 
         catch (err) {
             console.error("Login failed:", err)

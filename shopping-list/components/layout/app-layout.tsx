@@ -9,6 +9,7 @@ import { ChevronDown } from "lucide-react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { SyncStatus } from "@/types/type"
+import { useAuthContext } from "@/context/auth-context"
 
 const syncStatusLabels = {
   offline: "Offline",
@@ -26,6 +27,9 @@ const AppLayout = () => {
     synced: { backgroundColor: "#16A34A" },
   }
  
+  const { logout } = useAuthContext();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   useEffect(() => {
     
     setSyncStatus(navigator.onLine ? "synced" : "offline");
@@ -48,8 +52,16 @@ const AppLayout = () => {
     }
   }, [])
 
-  const handleLogOut = () => {
-    console.log('user is going to be logged out')
+  const handleLogOut =  () => {
+   setIsLoggingOut(true)
+    try {
+      logout().then(() => setIsLoggingOut(false))
+    } catch (error) {
+      console.log(error)
+    }
+    finally{
+      setIsLoggingOut(false)
+    }
   }
 
   return (
@@ -84,7 +96,7 @@ const AppLayout = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogOut}>
-                  Logout
+                    Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
